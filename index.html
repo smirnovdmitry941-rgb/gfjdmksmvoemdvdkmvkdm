@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Выгрузка данных</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'PT Sans', sans-serif;
+      background-color: #f5f7fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .logo span.blue { color: #0C5ADB; }
+    .logo span.red { color: #E31E24; }
+
+    .card {
+      background: #fff;
+      padding: 40px 60px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 400px;
+    }
+
+    .card h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 15px;
+      color: #202020;
+         }
+
+    .dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      background-color: #9ab3d1;
+      border-radius: 50%;
+      animation: blink 1.4s infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.3; }
+      40% { opacity: 1; }
+    }
+
+    .progress {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #4A4A4A; /* серый от Госуслуг */
+    }
+
+    .status {
+      font-size: 14px;
+      color: #4A4A4A;
+      min-height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <span class="blue">ГОС</span><span class="red">УСЛУГИ</span>
+  </div>
+
+  <div class="card">
+    <h1>Выгрузка данных....</h1>
+    <div class="dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <div class="progress" id="progress">0%</div>
+    <div class="status" id="status">Подготовка к загрузке....</div>
+  </div>
+
+  <script>
+    let progressEl = document.getElementById("progress");
+    let statusEl = document.getElementById("status");
+    let progress = 0;
+
+    // ⚡ Время загрузки (в секундах)
+    let duration = 8; // от 0 до 100% за 5 секунд
+    let interval = duration * 1000 / 100; // шаг на 1%
+
+    const messages = [
+      "Проверка подключения к серверу....",
+      "Загрузка пользовательских данных....",
+      "Авторизация с нового устройства....",
+      "Подключение нового устройства....",
+      "Шифрование сессии....",
+      "Выгрузка документов....",
+      "Получение справок....",
+      "Выгрузка электронной подписи....",
+      
+    ];
+
+    function updateProgress() {
+      if (progress < 100) {
+        progress++;
+        progressEl.textContent = progress + "%";
+
+        if (progress % 10 === 0) {
+          let randomMessage = messages[Math.floor(Math.random() * messages.length)];
+          statusEl.textContent = randomMessage;
+        }
+
+        setTimeout(updateProgress, interval);
+      } else {
+        statusEl.textContent = "Выгрузка данных на другое устройство подтверждена.";
+        // Перенаправление на authorized после завершения загрузки
+        setTimeout(() => {
+          window.location.href = 'authorized.html';
+        }, 1500); // Задержка 1.5 секунды перед перенаправлением
+      }
+    }
+
+    updateProgress();
+  </script>
+</body>
+</html>
