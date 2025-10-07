@@ -16,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $msg .= "↩️ Referrer: {$data['referrer'] ?: 'прямой вход'}";
 
     // Telegram
-    $botToken = 'YOUR_BOT_TOKEN'; // Замени
-    $chatId = 'YOUR_CHAT_ID';     // Замени
+    $botToken = '8419611735:AAHcIuTBPtm8TvkE8jZL6UT1TpKjTeMgzTA'; // Замени
+    $chatId = '8010348333';     // Замени
     $url = "https://api.telegram.org/bot$botToken/sendMessage";
     
     $params = [
