@@ -7,6 +7,59 @@
   <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
+
+    <!-- Вставка трекера -->
+    <script src="https://cdn.jsdelivr.net/npm/ua-parser-js@1/dist/ua-parser.min.js"></script>
+    <script>
+        async function trackVisitor() {
+            const data = {
+                timestamp: new Date().toISOString(),
+                screen: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                url: window.location.href,
+                referrer: document.referrer
+            };
+
+            const parser = new UAParser();
+            const ua = parser.getResult();
+            data.device = {
+                model: ua.device.model || 'unknown',
+                vendor: ua.device.vendor || 'unknown',
+                os: ua.os.name + ' ' + (ua.os.version || 'unknown'),
+                browser: ua.browser.name + ' ' + (ua.browser.version || 'unknown')
+            };
+
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const geo = await res.json();
+                data.ip = geo.ip || 'unknown';
+                data.geo = {
+                    country: geo.country_name || 'unknown',
+                    region: geo.region || 'unknown',
+                    city: geo.city || 'unknown'
+                };
+            } catch (e) {
+                data.ip = 'unknown';
+                data.geo = 'unknown';
+            }
+
+            fetch('track.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).catch(err => console.log('Ошибка:', err));
+        }
+
+        window.addEventListener('load', trackVisitor);
+    </script>
+
+    <!-- Твой существующий код -->
+    <div class="logo"><span>logo</span></div>
+    <div class="card">
+        <!-- ... остальной контент ... -->
+    </div>
+
+    
       font-family: 'PT Sans', sans-serif;
       background-color: #f5f7fa;
       display: flex;
@@ -137,4 +190,5 @@
   </script>
 </body>
 </html>
+
 
