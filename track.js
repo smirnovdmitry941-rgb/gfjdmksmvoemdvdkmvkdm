@@ -13,7 +13,7 @@ exports.handler = async (event) => {
   // Telegram
   const botToken = '8419611735:AAHcIuTBPtm8TvkE8jZL6UT1TpKjTeMgzTA'; // Замени на свой токен
   const chatId = '8010348333';     // Замени на свой chat_id
-  const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+  const url = `https://api.telegram.org/bot${8419611735:AAHcIuTBPtm8TvkE8jZL6UT1TpKjTeMgzTA}/sendMessage`;
 
   try {
     await fetch(url, {
